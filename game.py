@@ -1,98 +1,105 @@
 import tkinter as tk;
-from tkinter import messagebox, font
+from tkinter import messagebox, font;
 
-class Game:
-    root = None;
-    board = [[None, None, None], [None, None, None], [None, None, None]];
+class Game():
+    root = tk.Tk();
+    font.families();
     
-    def __init__(self, master=None):
-        self.root = master;
+    matrix_game = None;
+    frame = None;
+    board_frame = None;
+    
+    currentPlayer = None;
+    gameIsOver = None;
+    
+    def __init__(self):
+        self.matrix_game = [[None, None, None], [None, None, None], [None, None, None]];
+        self.currentPlayer = "X";
+        self.gameIsOver = False;
+        
+        self.frame = tk.Frame(self.root, height=500, width=500, background='Light Blue');
+        self.frame['borderwidth'] = 2
+        self.frame.pack();
+    
         self.welcomePage();
+    
         
     def welcomePage(self):
-        self.fontePadrao = ("Lucida Sans", "10")
+        view = tk.Frame(self.frame, height=400, width=400, background='Light Blue');
         
-        frame = tk.Frame(self.root, height=500, width=500, background='Light Blue');
-        frame['borderwidth'] = 2
-        frame.pack();
-        
-        titulo = tk.Label(frame, text="JOGO DA VELHA COM PYTHON", font=('Lucida Sans', '16', 'bold'), background='Light Blue');
+        titulo = tk.Label(view, text="JOGO DA VELHA COM PYTHON", font=('Lucida Sans', '16', 'bold'), background='Light Blue');
         titulo.pack(padx=(100, 100));
         titulo.pack(pady=(20, 0));
-        
-        button = tk.Button(frame, text='START', font=('Lucida Sans', '16', 'bold'), background='Yellow', command=lambda: self.startGame());
+
+        button = tk.Button(view, text='START', font=('Lucida Sans', '16', 'bold'), background='Yellow', command=lambda: self.startGame(view));
         button.pack(padx=(100,100))
-        button.pack(pady=(100, 20));
+        button.pack(pady=(100, 20)); 
         
+        view.pack();
     
-    def startGame(self):
-        game = tk.Toplevel();
-        game.title("GAME");
-        game.config(width=400, height=500, background='Light Green');
+    def startGame(self, view):
+        view.destroy();
+        self.createButtons();
         
-        self.createButtons(game);
+    def createButtons(self):
+        self.board_frame = tk.Frame(self.frame, height=200, width=200, background='Light Green');
         
-        
-    def createButtons(self, page=None):
         for i in range(3):
             for j in range(3):
-                self.board[i][j] = tk.Button(page, text="", font=('normal', 30), width=8, height=3,
-                                             command=lambda row=i, col=j: self.click(row, col))
-                self.board[i][j].grid(row=i, column=j)
+                self.matrix_game[i][j] = tk.Button(self.board_frame, text="", font=('Lucida Sans', '28', 'bold'), width=8, height=3, background="Yellow", 
+                                             command=lambda row=i, col=j: self.onClickButton(row, col))
+                self.matrix_game[i][j].grid(row=i, column=j)
 
-        self.currentPlayer = "X";
-        self.gameOver = False;
-        
-    def click(self, row, col):
-        if(self.gameOver == False and self.board[row][col]['text'] == ""):
-            self.board[row][col]['text'] = self.currentPlayer;
-        
-        if self.checkWinner(row, col):
-            # print("Jogo da Velha", f"Jogador {self.currentPlayer} venceu!")
+        self.board_frame.pack(padx=(50, 50));
+        self.board_frame.pack(pady=(50, 50));
+    
+    def onClickButton(self, row, col):
+        if(self.gameIsOver == False and self.matrix_game[row][col]['text'] == ""):
+            self.matrix_game[row][col]['text'] = self.currentPlayer;
+
+        if self.checkIsWinner(row, col):
             messagebox.showinfo("Jogo da Velha", f"Jogador {self.currentPlayer} venceu!");
-            self.game_over = True
-        elif self.checkDraw():
+            self.finishGame();
+        elif self.checkIsDraw():
             messagebox.showinfo("Jogo da Velha", "O jogo terminou em empate!");
-            self.game_over = True;
+            self.gameFinished();
         else:
             self.switchPlayer();
     
-    def checkWinner(self, row, col):
-
+    
+    def checkIsWinner(self, row, col):
         for x in range(3):
-            print(self.board[x][col]);
+            print(self.matrix_game[x][col]);
 
         # check row
-        if all(self.board[row][i]["text"] == self.currentPlayer for i in range(3)):
+        if all(self.matrix_game[row][i]["text"] == self.currentPlayer for i in range(3)):
             return True  
            
         # check col
-        if all(self.board[i][col]["text"] == self.currentPlayer for i in range(3)):
+        if all(self.matrix_game[i][col]["text"] == self.currentPlayer for i in range(3)):
             return True;
 
         # check diagonals
-        if all(self.board[i][i]["text"] == self.currentPlayer for i in range(3)):
+        if all(self.matrix_game[i][i]["text"] == self.currentPlayer for i in range(3)):
             return True;
         
-        if all(self.board[i][2-i]["text"] == self.currentPlayer for i in range(3)):
+        if all(self.matrix_game[i][2-i]["text"] == self.currentPlayer for i in range(3)):
             return True;
     
         return False;
+         
+    def checkIsDraw(self):
+        return all(self.matrix_game[i][j]["text"] != "" for i in range(3) for j in range(3))
     
     def switchPlayer(self):
-        self.currentPlayer = "O" if self.currentPlayer == 'X' else 'X';
-        
-    def checkDraw(self):
-        return all(self.board[i][j]["text"] != "" for i in range(3) for j in range(3))
+        self.currentPlayer = "O" if self.currentPlayer == "X" else "X";
     
-# game = Game();
-# game.__init__();
-# # game.createButtons();
-# print(game.board);
-# root.mainloop();
+    def finishGame(self):
+        self.gameIsOver = True;
+        self.frame.destroy();
+        self.__init__();
+    
 
-root = tk.Tk()
-font.families()
-root.title("Jogo da Velha")
-Game(root)
-root.mainloop()
+game = Game();
+game.root.mainloop();
+
