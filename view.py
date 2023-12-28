@@ -10,6 +10,7 @@ class View:
         self.frame = None;
         
         font.families();
+        self.root.title("JOGO DA VELHA COM PYTHON");
         
         self.player = Player();
         self.game = Game(self.player);
