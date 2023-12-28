@@ -1,6 +1,6 @@
 # 🕹️ Jogo da Velha com Python
 
-Clássico dos jogos, o Jogo da Velha com Python é um projeto simples mas nele pude aplicar meus conhecimentos básicos de Python e um pouco sobre orientação a objetos.
+Um projeto simples onde apliquei meus conhecimentos básicos de Python e orientação a objetos para criar o clássico Jogo da Velha.
 
 ## **Stack:**
 - Python
